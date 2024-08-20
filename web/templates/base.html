@@ -20,8 +20,7 @@
 
         <nav>
             {% block navbar %}
-            <div style="background: #fffb00;">Aqui va el navbar</div>
-
+            {% include 'snippets/navbar.html' %}
             {% endblock %}
         </nav>
 
@@ -34,7 +33,7 @@
 
         <footer>
             {% block footer %}
-            <div style="background: hsl(140, 66%, 71%);"> Aqui va el footer</div>
+            <div style="background: hsl(140, 66%, 71%);"> Desarrollado por Marcela Flores - Desafío Latam 2024</div>
 
             {% endblock %}
         </footer>
