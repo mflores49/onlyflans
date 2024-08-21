@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from web.models import Flan, Contact
 from web.forms import ContactForm
 from django.contrib.auth.decorators import login_required
+from django.views import View
+from web.services import crear_usuario
 
 # Create your views here.
 def index(request):
@@ -42,10 +44,36 @@ def contact(request):
             Contact.objects.create(
                 **form.cleaned_data
             )                                   # Esta es la forma de pedirle a un modelo que cree un registro usando los datos de un formulario
-            return redirect('success')         # Si el formulario es válido, se redirige al usuario a la URL '/success'.
+            return redirect('success')          # Si el formulario es válido, se redirige al usuario a la URL '/success'.
         context = {'form': form}                # Se crea un contexto que contiene el formulario con los datos (válidos o no).
         return render(request, 'contact.html', context) # Se vuelve a renderizar la plantilla con el contexto actualizado.
 
 
 def success(request):
     return render(request, 'success.html')
+
+
+class RegisterView(View):
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request):
+        username = request.POST['username']
+        first_name = request.POST['first_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        pass_confirm = request.POST['password_repeat']
+        crear = crear_usuario(request, username, first_name, email, password, pass_confirm)
+
+
+        if crear:
+            return redirect('login')
+        # Si hay errores, mantiene los datos ingresados en el formulario
+        return render(request, 'registration/register.html', {
+            'username': username,
+            'first_name': first_name,
+            'email': email,
+        })
+
+    def get(self, request):
+        return render(request, 'registration/register.html')
